@@ -1,14 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-interface IERC721 {
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 nftId
-    ) external;
-}
-
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract NFTDutchAuction {
 
@@ -23,9 +17,12 @@ contract NFTDutchAuction {
     IERC721 public immutable nft;
     uint256 public immutable nftId;
 
+    IERC20 public immutable bid;
+
     event AuctionEnded(address winner, uint256 amount);
 
     constructor(
+        address erc20TokenAddress,
         address erc721TokenAddress,
         uint256 _nftTokenId,
         uint256 _reservePrice, 
@@ -42,6 +39,8 @@ contract NFTDutchAuction {
 
             nft = IERC721(erc721TokenAddress);
             nftId = _nftTokenId;
+
+            bid = IERC20(erc20TokenAddress);
     }
     
     // query auction price function
@@ -57,17 +56,16 @@ contract NFTDutchAuction {
         require(!ended, "The auction has ended");
         require(block.number <= lastBlockNumber, "The auction has ended");
         uint256 auctionPrice = getAuctionPrice();
-        require(msg.value >= auctionPrice, "your bid is lower than set value");
+        require(bid.balanceOf(msg.sender) >= auctionPrice, "your bid is lower than set value");
 
         // transfer BasicNFT
         nft.transferFrom(owner, msg.sender, nftId);
         
-        // refund excessive value
-        uint refund = msg.value - auctionPrice;
-        if (refund > 0) {
-            payable(msg.sender).transfer(refund);
-            ended = true;
+        // transfer ERC20 token
+        if(msg.sender != owner){
+            bid.transferFrom(msg.sender, owner, auctionPrice);
         }
+        ended = true;
         emit AuctionEnded(msg.sender, auctionPrice);
     }
 
