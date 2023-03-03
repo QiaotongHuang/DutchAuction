@@ -1,7 +1,7 @@
 import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 describe("NFT Dutch Auction Test", function () {
   const reservePrice = 5000;
@@ -30,8 +30,7 @@ describe("NFT Dutch Auction Test", function () {
     //NFT mint
     BasicNFT.mint(owner.address, _nftTokenId);
     const NFTDutchAuctionFactory = await ethers.getContractFactory("NFTDutchAuction");
-    const NFTDutchAuction = await NFTDutchAuctionFactory.deploy(BidToken.address, BasicNFT.address, _nftTokenId, reservePrice, numBlocksAuctionOpen, offerPriceDecrement);
-
+    const NFTDutchAuction = await upgrades.deployProxy(NFTDutchAuctionFactory, [BidToken.address, BasicNFT.address, _nftTokenId, reservePrice, numBlocksAuctionOpen, offerPriceDecrement], {kind:'uups', initializer:'initialize'});
     //NFT approve
     await BasicNFT.approve(NFTDutchAuction.address, _nftTokenId);
 
