@@ -63,6 +63,57 @@ describe("NFT Dutch Auction Test", function () {
       expect(await NFTDutchAuction.nftId()).to.equal(_nftTokenId);
     });
 
+    it("offchain sign to permit tokens", async function () {
+      const { BasicNFT, BidToken, NFTDutchAuction, owner, otherAccount, anotherAccount } = await deployNFTDutchAuctionFixture();
+      const name = "Bid Token";
+      const version = "1";
+      const nonce = 0;
+      const deadline = Math.floor(Date.now() / 1000) + 60 * 60; // 1 hour from now
+      const value = ethers.utils.parseUnits("100", "ether");
+  
+      const domain = {
+        name,
+        version,
+        chainId: await owner.getChainId(),
+        verifyingContract: BidToken.address,
+      };
+  
+      const types = {
+        Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" },
+        ],
+      };
+
+      const message = {
+        owner: owner.address,
+        spender: otherAccount.address,
+        value,
+        nonce,
+        deadline,
+      };
+  
+      const signature = await owner._signTypedData(domain, types, message);
+      const sig = ethers.utils.splitSignature(signature);
+  
+      await BidToken.permit(
+        owner.address,
+        otherAccount.address,
+        value,
+        deadline,
+        sig.v,
+        sig.r,
+        sig.s
+      );
+  
+      expect(await BidToken.allowance(owner.address, otherAccount.address)).to.equal(
+        value
+      );
+    });
+
   });
 
 
