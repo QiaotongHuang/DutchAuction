@@ -8,7 +8,7 @@ describe("NFT Dutch Auction Test", function () {
   const numBlocksAuctionOpen = 50;
   const offerPriceDecrement = 100;
   const _nftTokenId = 777;
- 
+
   async function deployBasicNFTFixture() {
 
     // Contracts are deployed using the first account by default
@@ -54,35 +54,35 @@ describe("NFT Dutch Auction Test", function () {
 
     it("Bids below the set price should fail", async function () {
       const { BasicNFT, NFTDutchAuction, owner, otherAccount, anotherAccount } = await deployNFTDutchAuctionFixture();
-      var promise = NFTDutchAuction.connect(otherAccount).auctionMint({value: 4900, gasPrice: 15000000000});
+      var promise = NFTDutchAuction.connect(otherAccount).auctionMint({ value: 4900, gasPrice: 15000000000 });
       expect(await NFTDutchAuction.ended()).to.equal(false);
     });
 
     it("The owner of the auction contract can bid successfully", async function () {
       const { BasicNFT, NFTDutchAuction, owner, otherAccount, anotherAccount } = await deployNFTDutchAuctionFixture();
-      var promise = NFTDutchAuction.connect(owner).auctionMint({value: 10000, gasPrice: 15000000000});
+      var promise = NFTDutchAuction.connect(owner).auctionMint({ value: 10000, gasPrice: 15000000000 });
       expect(await NFTDutchAuction.ended()).to.equal(true);
       expect(await BasicNFT.ownerOf(_nftTokenId)).to.equal(owner.address);
     });
 
     it("A bid at a sufficient price should succeed", async function () {
       const { BasicNFT, NFTDutchAuction, owner, otherAccount, anotherAccount } = await deployNFTDutchAuctionFixture();
-      var promise = NFTDutchAuction.connect(otherAccount).auctionMint({value: 10000, gasPrice: 15000000000});
+      var promise = NFTDutchAuction.connect(otherAccount).auctionMint({ value: 10000, gasPrice: 15000000000 });
       expect(await NFTDutchAuction.ended()).to.equal(true);
       expect(await BasicNFT.ownerOf(_nftTokenId)).to.equal(otherAccount.address);
     });
 
     it("Bids without enough gasprice will fail", async function () {
       const { BasicNFT, NFTDutchAuction, owner, otherAccount, anotherAccount } = await deployNFTDutchAuctionFixture();
-      var promise = NFTDutchAuction.connect(otherAccount).auctionMint({value: 10000, gasPrice: 0});
+      var promise = NFTDutchAuction.connect(otherAccount).auctionMint({ value: 10000, gasPrice: 0 });
       expect(await NFTDutchAuction.ended()).to.equal(false);
     });
 
     it("Bids from other accounts should fail after a successful bid", async function () {
       const { BasicNFT, NFTDutchAuction, owner, otherAccount, anotherAccount } = await deployNFTDutchAuctionFixture();
-      NFTDutchAuction.connect(otherAccount).auctionMint({value: 10000, gasPrice: 15000000000});
+      NFTDutchAuction.connect(otherAccount).auctionMint({ value: 10000, gasPrice: 15000000000 });
       expect(await NFTDutchAuction.ended()).to.equal(true);
-      var promise = NFTDutchAuction.connect(anotherAccount).auctionMint({value: 10000, gasPrice: 15000000000});
+      var promise = NFTDutchAuction.connect(anotherAccount).auctionMint({ value: 10000, gasPrice: 15000000000 });
       expect(await BasicNFT.ownerOf(_nftTokenId)).to.equal(otherAccount.address);
     });
 

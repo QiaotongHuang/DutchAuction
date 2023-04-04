@@ -34,7 +34,12 @@ contract BasicNFT is IERC721 {
         return _balances[owner];
     }
 
-    function ownerOf(uint tokenId) public view override returns (address owner) {
+    function ownerOf(uint tokenId)
+        public
+        view
+        override
+        returns (address owner)
+    {
         owner = _owners[tokenId];
         require(owner != address(0), "token doesn't exist");
     }
@@ -48,12 +53,20 @@ contract BasicNFT is IERC721 {
         return _operatorApprovals[owner][operator];
     }
 
-    function setApprovalForAll(address operator, bool approved) external override {
+    function setApprovalForAll(address operator, bool approved)
+        external
+        override
+    {
         _operatorApprovals[msg.sender][operator] = approved;
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function getApproved(uint tokenId) external view override returns (address) {
+    function getApproved(uint tokenId)
+        external
+        view
+        override
+        returns (address)
+    {
         require(_owners[tokenId] != address(0), "token doesn't exist");
         return _tokenApprovals[tokenId];
     }
@@ -144,7 +157,10 @@ contract BasicNFT is IERC721 {
         bytes memory _data
     ) private {
         _transfer(owner, from, to, tokenId);
-        require(_checkOnERC721Received(from, to, tokenId, _data), "not ERC721Receiver");
+        require(
+            _checkOnERC721Received(from, to, tokenId, _data),
+            "not ERC721Receiver"
+        );
     }
 
     function safeTransferFrom(
@@ -190,4 +206,3 @@ contract BasicNFT is IERC721 {
         emit Transfer(owner, address(0), tokenId);
     }
 }
-

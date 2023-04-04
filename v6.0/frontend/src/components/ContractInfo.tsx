@@ -48,6 +48,7 @@ export function ContractInfo(): ReactElement {
   const [contractAddress, setContractAddress] = useState<string>("");
   const [currentPriceLookUp, setCurrentPrice] = useState<number>();
   const [winner, setWinner] = useState<string>("");
+  const [seller, setSeller] = useState<string>("");
 
   const handleContractAddressChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -65,10 +66,12 @@ export function ContractInfo(): ReactElement {
     const priceDecrementLookUp = await basicDutchAuction.offerPriceDecrement();
     const currentPrice = await basicDutchAuction.getPrice();
     const winner = await basicDutchAuction.winner();
+    const seller = await basicDutchAuction.seller();
     setReservePriceLookUp(reservePriceLookUp.toNumber());
     setPriceDecrementLookUp(priceDecrementLookUp.toNumber());
     setCurrentPrice(currentPrice.toNumber());
     setWinner(winner);
+    setSeller(seller);
   };
 
   if (!!error) {
@@ -103,6 +106,8 @@ export function ContractInfo(): ReactElement {
           gridGap: "1rem",
         }}
       >
+        <label> Seller: </label>
+        <input type="text" value={seller} readOnly />
         <label> Winner: </label>
         <input type="text" value={winner} readOnly />
         <label> Current Price: </label>

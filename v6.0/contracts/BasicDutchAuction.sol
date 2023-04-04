@@ -53,6 +53,7 @@ contract BasicDutchAuction {
 
     //Check to ensure that the amount of ETH sent by the bidder/buyer ( msg.value ) is always greater than or equal to the current price, if the check fails an error message will be displayed.
     require(msg.value >= price, "The bid is less than the price");
+    require(msg.sender != seller, "The seller can not bid");
 
     winner = payable(msg.sender);
     amount = msg.value;
