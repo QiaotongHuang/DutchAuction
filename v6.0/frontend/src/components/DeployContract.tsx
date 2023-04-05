@@ -26,7 +26,7 @@ const StyledButton = styled.button`
   width: 180px;
   height: 2rem;
   border-radius: 1rem;
-  border-color: ${({ disabled }) => (disabled ? "unset" : "blue")};
+  border-color: ${({ disabled }) => (disabled ? "unset" : "green")};
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   place-self: center;
 `;
@@ -118,7 +118,7 @@ export function DeployContract(): ReactElement {
           onChange={(event) => handleInputChange(event, setReservePrice)}
           value={reservePrice}
         />
-        <label>Auction Blocks: </label>
+        <label>Blocks Open: </label>
         <input
           type="text"
           pattern="[0-9]"
@@ -133,8 +133,14 @@ export function DeployContract(): ReactElement {
           value={priceDecrement}
         />
       </div>
-
-      <div>
+      <div
+        style={{
+          background: "green",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <StyledButton
           disabled={!active || !!basicDutchAuction}
           onClick={handleDeployContract}
@@ -145,12 +151,12 @@ export function DeployContract(): ReactElement {
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
-          gridGap: "1rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <label>Dutch Auction Contract Address: </label>
+        <label>Auction Address: </label>
         <input type="text" value={contractAddress} readOnly />
       </div>
     </>

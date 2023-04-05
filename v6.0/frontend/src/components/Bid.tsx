@@ -13,7 +13,7 @@ const StyledButton = styled.button`
   width: 150px;
   height: 2rem;
   border-radius: 1rem;
-  border-color: blue;
+  border-color: orange;
   cursor: pointer;
   place-self: center;
 `;
@@ -97,7 +97,7 @@ const Bid = (): ReactElement => {
           gridGap: "1rem",
         }}
       >
-        <label>Deployed contract address: </label>
+        <label>Auction Address: </label>
         <input
           onChange={handleContractAddressChange}
           type="text"
@@ -110,6 +110,16 @@ const Bid = (): ReactElement => {
           onChange={handleBidAmountChange}
           value={bidAmount}
         />
+      </div>
+
+      <div
+        style={{
+          background: "orange",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <span>
           {" "}
           <StyledButton onClick={handleBid}>Bid</StyledButton>{" "}
@@ -117,9 +127,9 @@ const Bid = (): ReactElement => {
       </div>
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
-          gridGap: "1rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <label>Winner: </label>

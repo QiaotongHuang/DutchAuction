@@ -49,6 +49,7 @@ export function ContractInfo(): ReactElement {
   const [currentPriceLookUp, setCurrentPrice] = useState<number>();
   const [winner, setWinner] = useState<string>("");
   const [seller, setSeller] = useState<string>("");
+  const [bidAmount, setBidAmount] = useState<number>();
 
   const handleContractAddressChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -67,11 +68,13 @@ export function ContractInfo(): ReactElement {
     const currentPrice = await basicDutchAuction.getPrice();
     const winner = await basicDutchAuction.winner();
     const seller = await basicDutchAuction.seller();
+    const bidAmount = await basicDutchAuction.amount();
     setReservePriceLookUp(reservePriceLookUp.toNumber());
     setPriceDecrementLookUp(priceDecrementLookUp.toNumber());
     setCurrentPrice(currentPrice.toNumber());
     setWinner(winner);
     setSeller(seller);
+    setBidAmount(bidAmount);
   };
 
   if (!!error) {
@@ -82,23 +85,43 @@ export function ContractInfo(): ReactElement {
     <>
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
-          gridGap: "1rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <label>Contract Address: </label>
+        <label>Auction Address: </label>
         <input
           onChange={handleContractAddressChange}
           type="text"
           value={contractAddress}
         />
+
+      </div>
+
+      <div
+        style={{
+          background: "blue",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <span>
           <StyledButton onClick={handleGetInfo}> Show Info</StyledButton>
         </span>
       </div>
 
-      <h4>Dutch Auction Info: </h4>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h4>Dutch Auction Info: </h4>
+      </div>
+
       <div
         style={{
           display: "grid",
@@ -116,6 +139,8 @@ export function ContractInfo(): ReactElement {
         <input type="text" value={reservePriceLookUp} readOnly />
         <label> Price Decrement: </label>
         <input type="text" value={priceDecrementLookUp} readOnly />
+        <label> Bid Amount: </label>
+        <input type="text" value={bidAmount} readOnly />
       </div>
     </>
   );

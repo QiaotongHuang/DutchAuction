@@ -38,6 +38,7 @@ contract BasicDutchAuction {
 
   //A function/method named getPrice() to get the current price.
   function getPrice() public view returns (uint256) {
+    require(!ended, "Auction Ended");
     require(block.number <= auctionEndBlock, "Auction Ended");
     return initialPrice - (block.number - initialBlock) * offerPriceDecrement;
   }
