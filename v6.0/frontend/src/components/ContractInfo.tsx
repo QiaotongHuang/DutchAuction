@@ -65,7 +65,8 @@ export function ContractInfo(): ReactElement {
     );
     const reservePriceLookUp = await basicDutchAuction.reservePrice();
     const priceDecrementLookUp = await basicDutchAuction.offerPriceDecrement();
-    const currentPrice = await basicDutchAuction.getPrice();
+    const end = await basicDutchAuction.ended();
+    const currentPrice = end ? reservePriceLookUp : await basicDutchAuction.getPrice();
     const winner = await basicDutchAuction.winner();
     const seller = await basicDutchAuction.seller();
     const bidAmount = await basicDutchAuction.amount();
@@ -74,7 +75,7 @@ export function ContractInfo(): ReactElement {
     setCurrentPrice(currentPrice.toNumber());
     setWinner(winner);
     setSeller(seller);
-    setBidAmount(bidAmount);
+    setBidAmount(bidAmount.toNumber());
   };
 
   if (!!error) {
