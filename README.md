@@ -113,6 +113,7 @@ Steps:
 *submitting a winning bid*  
 *Use IPNS to generate a fixed name for your UI: https://docs.ipfs.tech/concepts/ipns/#mutability-in-ipfs*  
 
+***IPFS URL: ipfs://QmdTZg4sAa8x9cdGDL6RZj9wH3AEAJNgG2aPAPduXgt34k***
 
 **TODO**: Add more versions based on these solidity patterns:  
 https://github.com/dragonfly-xyz/useful-solidity-patterns   
