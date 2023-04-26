@@ -1,66 +1,43 @@
-NFTDutchAuction v2.0 allows the seller to mint x number of nfts, then list a single one at a time in a Dutch Auction. The contract first address to successfuly bid at or above the current price is the winner. When a winning address is found, the contract immediately transfers Ether from the winner's account to the seller, and the nft from the seller to the winner. Also in v2.0 are test cases for both the MintNFT and NFTDutchAuction contracts
+# Sample Hardhat Project
 
-(base) vicken@Vickens-MacBook-Air DutchAuction v2.0 % npx hardhat coverage
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
 
-# Version
+Try running some of the following tasks:
 
-> solidity-coverage: v0.8.2
-
-# Instrumenting for coverage...
-
-> MintNFT.sol
-> NFTDutchAuction.sol
-
-# Compilation:
-
-Nothing to compile
-No need to generate any newer typings.
-
-# Network Info
-
-> HardhatEVM: v2.12.6
-> network: hardhat
-
-MintNFT
-Max Supply
-✔ should set max supply of nfts minted to 10(index 0-9)
-safeMint
-✔ should mint 1 NFT to the owners address at index 0 (43ms)
-✔ should not mint more tokens than the max supply (367ms)
-tokenURI
-✔ should return the URI of the given token
-
-NFTDutchAuction
-Checking Auction Values
-✔ reserve price - 100 wei (73ms)
-✔ num blocks auction open for - 10
-✔ offer price decrement - 10 wei
-✔ checking if initial price is 200 wei
-setMintContractAddress
-✔ checking mint contract address function
-Checking Seller
-✔ is owner of this contract the seller
-✔ bid from seller account
-Checking Bidders
-✔ bidder has more than 0 wei
-✔ bid accepted - 200 wei - sufficient amount
-✔ bid rejected - 100 wei - insufficient amount
-✔ multiple bids - first bid greater than current price, second bid lower
-✔ multiple bids - both bids higher than current price
-✔ check for winner
-✔ auction ended - winner already chosen
-✔ auction ended - reject bid because select number of blocks passed
-
-19 passing (1s)
+```shell
+npx hardhat help
+npx hardhat test
+REPORT_GAS=true npx hardhat test
+npx hardhat node
+npx hardhat run scripts/deploy.ts
+```
 
 ----------------------|----------|----------|----------|----------|----------------|
-File | % Stmts | % Branch | % Funcs | % Lines |Uncovered Lines |
+File                  |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
 ----------------------|----------|----------|----------|----------|----------------|
-contracts/ | 89.29 | 58.33 | 92.86 | 90.24 | |
-MintNFT.sol | 88.89 | 66.67 | 75 | 90 | 61 |
-NFTDutchAuction.sol | 89.47 | 55.56 | 100 | 90.32 | 127,128,153 |
+ contracts/           |      100 |    77.78 |      100 |      100 |                |
+  Minting.sol         |      100 |       75 |      100 |      100 |                |
+  NFTDutchAuction.sol |      100 |    78.57 |      100 |      100 |                |
 ----------------------|----------|----------|----------|----------|----------------|
-All files | 89.29 | 58.33 | 92.86 | 90.24 | |
+All files             |      100 |    77.78 |      100 |      100 |                |
 ----------------------|----------|----------|----------|----------|----------------|
 
-> Istanbul reports written to ./coverage/ and ./coverage.json
+
+ Tests
+    Mint
+      ✔ Safe Mint - Owner (865ms)
+      ✔ Safe Mint - Other Account
+      ✔ Mint Successfully and Deploy Auction's Contract (71ms)
+
+  Bid - before approval
+    ✔ Bid - Seller trying to bid
+    ✔ Bid - Without approval from Minting Contract
+    ✔ Approving - Failure due to non-existent token id
+    ✔ Approval - Failure - Not the owner
+    ✔ Approving (40ms)
+
+  Bid - After Approval
+    ✔ Bid - Failure - Insufficient Funds
+    ✔ Bid - Failure - Less than reserve price
+    ✔ Bid - Success
+    ✔ Bid - Failure - Closed Auction (38ms)
