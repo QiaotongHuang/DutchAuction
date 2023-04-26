@@ -5,7 +5,9 @@ pragma solidity ^0.8.17;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./MintNFT.sol";
+import "./VToken.sol";
 
 // creates interface which allows us to uses openzeppelin functions
 interface IMintNFT {
@@ -20,7 +22,19 @@ interface IMintNFT {
     function balanceOf(address _owner) external view returns (uint256);
 }
 
-contract NFTDutchAuction is Initializable {
+interface IMintERC20 {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external returns (bool);
+
+    function balanceOf(address _account) external view returns (uint256);
+
+    function transfer(address _to, uint256 _amount) external returns (bool);
+}
+
+contract NFTDutchAuction_ERC20Bids is Initializable {
     uint256 reservePrice;
     uint256 numBlocksAuctionOpen;
     uint256 offerPriceDecrement;
@@ -36,9 +50,13 @@ contract NFTDutchAuction is Initializable {
     uint256 refundAmount;
     bool public isAuctionOpen = true;
 
-    IMintNFT private mintNFT; // initializes interface to mintNFT
+    IMintNFT mintNFT; // initializes interface to mintNFT
+    IMintERC20 mintERC20;
+
+    address erc20TokenAddress;
 
     constructor(
+        address _erc20TokenAddress,
         address _erc721TokenAddress,
         uint256 _nftTokenID,
         uint256 _reservePrice,
@@ -59,6 +77,9 @@ contract NFTDutchAuction is Initializable {
         blockStart = block.number;
         erc721TokenAddress = _erc721TokenAddress;
         nftTokenID = _nftTokenID;
+        erc20TokenAddress = _erc20TokenAddress;
+        mintERC20 = IMintERC20(erc20TokenAddress);
+        mintNFT = IMintNFT(erc721TokenAddress);
     }
 
     /*
@@ -86,16 +107,21 @@ contract NFTDutchAuction is Initializable {
     }
 */
     // takes nft minting contracts address as parameter
-    function setMintContractAddress(IMintNFT _mintNFT) public {
-        mintNFT = _mintNFT;
-    }
+    // function setMintContractAddress(IMintNFT _mintNFT) public {
+    //     mintNFT = _mintNFT;
+    // }
+
+    // function setERC20MintContractAddress(IMintERC20 _mintERC20) public {
+    //     mintERC20 = _mintERC20;
+    // }
 
     function getCurrentPrice() public view returns (uint256) {
         return initialPrice - (block.number - blockStart) * offerPriceDecrement;
     }
 
     // bid function makes checks, accepts or rejects bids, and executes the wei transfer if accepted
-    function bid() public payable returns (address) {
+    function bid(uint256 _bidAmount) public payable returns (address) {
+        console.log(msg.sender, "has bid", _bidAmount, "VToken");
         require(isAuctionOpen, "Auction is closed"); // checks to make sure the auction is still open
         require(
             winner == address(0),
@@ -106,22 +132,28 @@ contract NFTDutchAuction is Initializable {
             block.number - blockStart <= numBlocksAuctionOpen,
             "Auction has closed - total number of blocks the auction is open for have passed"
         ); // check if the duration of the auction has passed by seeing what block we're on
+        // require(
+        //     address(this).balance > 0,
+        //     "Your accounts balance is not greater than 0"
+        // ); // checks if the bidding address's balance is greater than 0
+        // require(
+        //     msg.value >= getCurrentPrice(),
+        //     "You have not sent sufficient funds"
+        // ); // check if the buyer has bid a sufficient amount
+        // require(nftTokenID >= 0, "The NFT token ID is less than 0"); // checks if the nft id is negative
         require(
-            address(this).balance > 0,
-            "Your accounts balance is not greater than 0"
-        ); // checks if the bidding address's balance is greater than 0
-        require(
-            msg.value >= getCurrentPrice(),
-            "You have not sent sufficient funds"
-        ); // check if the buyer has bid a sufficient amount
-        require(nftTokenID >= 0, "The NFT token ID is less than 0"); // checks if the nft id is negative
+            mintERC20.balanceOf(msg.sender) >= _bidAmount,
+            "You have bid more tokens than you own"
+        );
 
         totalBids++; // increments totalBids by 1 every time a bid is entered
 
         require(totalBids > 0, "There must be at least one bid to finalize"); // checks if there is at least one bid on item
 
         winner = msg.sender; // assigns winner to address with first winning bid - finalize fn
-        payable(seller).transfer(msg.value); // transfers wei from bidder to seller
+        // payable(seller).transfer(msg.value); // transfers wei from bidder to seller
+        mintERC20.transferFrom(winner, seller, getCurrentPrice());
+        console.log("Owners address %s", winner);
         mintNFT.safeTransferFrom(seller, winner, nftTokenID); // transfer nft from seller to winner based on its id
 
         isAuctionOpen = false; // sets isAuctionOpen variable to false
@@ -130,6 +162,7 @@ contract NFTDutchAuction is Initializable {
 
     // returns the sellers address
     function getSellerAddress() public view returns (address) {
+        console.log("Sellers address %s", seller);
         return seller;
     }
 
@@ -146,14 +179,5 @@ contract NFTDutchAuction is Initializable {
     // returns the price decrement
     function getPriceDecrement() public view returns (uint256) {
         return offerPriceDecrement;
-    }
-
-    function getWinner() public view returns (address) {
-        require(winner == msg.sender, "You are the winner"); // checks if the winner variable is the winning address
-        return winner;
-    }
-
-    function balanceOf(address) public view returns (uint256) {
-        return address(this).balance;
     }
 }

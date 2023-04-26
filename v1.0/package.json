@@ -1,19 +1,20 @@
 {
-  "name": "dutchauction-v3.0",
+  "name": "v1.0",
   "version": "1.0.0",
-  "description": "",
+  "description": "Version 1 of Dutch Auction",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [
+    "Solidity",
+    "Typescript",
+    "Javascript"
+  ],
+  "author": "Kashyab Murali",
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
-    "hardhat": "^2.12.7"
-  },
-  "dependencies": {
-    "@openzeppelin/contracts": "^4.8.1",
-    "@openzeppelin/contracts-upgradeable": "^4.8.1"
+    "hardhat": "^2.12.6"
   }
 }
