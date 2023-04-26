@@ -1,25 +1,19 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  // const reservePrice = 5000;
-  // const numBlocksAuctionOpen = 50;
-  // const offerPriceDecrement = 100;
-  // const _nftTokenId = 777;
+  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
+  const unlockTime = currentTimestampInSeconds + 60;
 
-  // const [owner, otherAccount] = await ethers.getSigners();
+  const lockedAmount = ethers.utils.parseEther("0.001");
 
-  // const BasicNFTFactory = await ethers.getContractFactory("BasicNFT");
-  // const BasicNFT = await BasicNFTFactory.deploy();
+  const Lock = await ethers.getContractFactory("Lock");
+  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
 
-  // //NFT mint
-  // BasicNFT.mint(owner.address, _nftTokenId);
-  // const NFTDutchAuctionFactory = await ethers.getContractFactory("NFTDutchAuction");
-  // const NFTDutchAuction = await NFTDutchAuctionFactory.deploy(owner.address, _nftTokenId, reservePrice, numBlocksAuctionOpen, offerPriceDecrement);
+  await lock.deployed();
 
-  // //NFT approve
-  // BasicNFT.approve(NFTDutchAuction.address, _nftTokenId);
-
-  // console.log(`NFT Dutch Auction deployed successfully`);
+  console.log(
+    `Lock with ${ethers.utils.formatEther(lockedAmount)}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+  );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
