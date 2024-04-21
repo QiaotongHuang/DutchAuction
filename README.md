@@ -97,7 +97,7 @@ This project aims to build a decentralized application for a Dutch Auction.
 
 ### UI Hosting
 - Host the UI through IPFS to enable access via an ipfs:// URL. 
-  For example if your CID is QmRgCTtKd91QkgoTiJQky57pCRda2drKEvTyFkUznaoKm3, the URL to access the content is ipfs://QmRgCTtKd91QkgoTiJQky57pCRda2drKEvTyFkUznaoKm3 
+  For example if your CID is QmRgCTtKd91QkgoTiJQky57pCRda2drKEvTyFkUznaoKm3, the URL to access the content is ipfs://QmRgCTtKd91QkgoTiJQky57pCRda2drKEvTyFkUznaoKm3  
   Steps:  
     *Generate build files for your UI*  
     *Install IPFS desktop and IPFS browser plugin*  
